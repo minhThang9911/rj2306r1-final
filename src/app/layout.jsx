@@ -7,10 +7,14 @@ import {
 	CssBaseline,
 } from "@mui/material";
 import React, { useState } from "react";
+import { Provider as ReduxProvider } from "react-redux";
 import Footer from "~/layout/footer/page";
 import Header from "~/layout/header/Header";
 import Sidebar from "~/layout/sidebar/Sidebar";
 import { baselightTheme } from "~/utils/theme/DefaultColors";
+import { store } from "~/redux/store";
+
+import dynamic from "next/dynamic";
 
 const MainWrapper = styled("div")(() => ({
 	display: "flex",
@@ -27,61 +31,53 @@ const PageWrapper = styled("div")(() => ({
 	backgroundColor: "transparent",
 }));
 
+const DbProvider = dynamic(() => import("~/components/provider/DbProvider"), {
+	ssr: false,
+});
+
 export default function RootLayout({ children }) {
 	const [isSidebarOpen, setSidebarOpen] = useState(true);
 	const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 	return (
 		<html lang="en">
 			<body>
-				<ThemeProvider theme={baselightTheme}>
-					<CssBaseline />
-					<MainWrapper className="mainwrapper">
-						{/* ------------------------------------------- */}
-						{/* Sidebar */}
-						{/* ------------------------------------------- */}
-						<Sidebar
-							isSidebarOpen={isSidebarOpen}
-							isMobileSidebarOpen={isMobileSidebarOpen}
-							onSidebarClose={() => setMobileSidebarOpen(false)}
-						/>
-						{/* ------------------------------------------- */}
-						{/* Main Wrapper */}
-						{/* ------------------------------------------- */}
-						<PageWrapper className="page-wrapper">
-							{/* ------------------------------------------- */}
-							{/* Header */}
-							{/* ------------------------------------------- */}
-							<Header
-								toggleMobileSidebar={() =>
-									setMobileSidebarOpen(true)
-								}
-							/>
-							{/* ------------------------------------------- */}
-							{/* PageContent */}
-							{/* ------------------------------------------- */}
-							<Container
-								sx={{
-									paddingTop: "20px",
-									maxWidth: "1200px",
-								}}>
-								{/* ------------------------------------------- */}
-								{/* Page Route */}
-								{/* ------------------------------------------- */}
-								<Box sx={{ minHeight: "calc(100vh - 170px)" }}>
-									{children}
-								</Box>
-								{/* ------------------------------------------- */}
-								{/* End Page */}
-								{/* ------------------------------------------- */}
-
-								{/* ------------------------------------------- */}
-								{/* Footer */}
-								{/* ------------------------------------------- */}
-								<Footer />
-							</Container>
-						</PageWrapper>
-					</MainWrapper>
-				</ThemeProvider>
+				<ReduxProvider store={store}>
+					<DbProvider>
+						<ThemeProvider theme={baselightTheme}>
+							<CssBaseline />
+							<MainWrapper className="mainwrapper">
+								<Sidebar
+									isSidebarOpen={isSidebarOpen}
+									isMobileSidebarOpen={isMobileSidebarOpen}
+									onSidebarClose={() =>
+										setMobileSidebarOpen(false)
+									}
+								/>
+								<PageWrapper className="page-wrapper">
+									<Header
+										toggleMobileSidebar={() =>
+											setMobileSidebarOpen(true)
+										}
+									/>
+									<Container
+										sx={{
+											paddingTop: "20px",
+											maxWidth: "1200px",
+										}}>
+										<Box
+											sx={{
+												minHeight:
+													"calc(100vh - 170px)",
+											}}>
+											{children}
+										</Box>
+										<Footer />
+									</Container>
+								</PageWrapper>
+							</MainWrapper>
+						</ThemeProvider>
+					</DbProvider>
+				</ReduxProvider>
 			</body>
 		</html>
 	);
