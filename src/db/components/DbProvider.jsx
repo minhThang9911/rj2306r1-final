@@ -1,12 +1,15 @@
 import { Provider } from "use-pouchdb";
 import PouchDb from "pouchdb-browser";
-const localDb = new PouchDb("local");
+import config from "~/config";
+const localDb = new PouchDb(config.db.localDb);
+const remoteDb = new PouchDb(config.db.remoteUrl)
 function DbProvider({ children }) {
 	return (
 		<Provider
-			default="local"
+			default={config.db.localDb}
 			databases={{
 				local: localDb,
+				remote: remoteDb
 			}}>
 			{children}
 		</Provider>

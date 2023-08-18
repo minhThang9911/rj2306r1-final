@@ -31,7 +31,7 @@ const PageWrapper = styled("div")(() => ({
 	backgroundColor: "transparent",
 }));
 
-const DbProvider = dynamic(() => import("~/components/provider/DbProvider"), {
+const DbProvider = dynamic(() => import("~/db/components/DbProvider"), {
 	ssr: false,
 });
 
